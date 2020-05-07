@@ -1,0 +1,29 @@
+[{
+    "name": "Google Chrome",
+    "keywords": "google chrome",
+    "cmd": "/opt/google/chrome-unstable/google-chrome-unstable"
+}, {
+    "name": "Sublime Text",
+    "keywords": "sublime text",
+    "cmd": "/opt/sublime_text/sublime_text"
+}, {
+    "name": "Visual Studio Code",
+    "keywords": "visual studio code vscodium",
+    "cmd": "/usr/share/vscodium/vscodium --unity-launch"
+}, {
+    "name": "Pluma Editor",
+    "keywords": "pluma editor",
+    "cmd": "pluma"
+}, {
+    "name": "Mozilla Firefox",
+    "keywords": "mozilla firefox",
+    "cmd": "firefox"
+}, {
+    "name": "Rms Bible",
+    "keywords": "rms biblia bible",
+    "cmd": "/home/anonymous/Downloads/Bible/node_modules/electron/dist/electron /home/anonymous/Downloads/Bible"
+}, {
+    "name": "Rms Himnario Adventista",
+    "keywords": "rms himnario adventista",
+    "cmd": "/home/anonymous/Downloads/Himnario_Adventista/rmsplayer"
+}]
