@@ -35,7 +35,7 @@ function autocomplete(e) {
 		if (!isEmptyArray(res)) {
 
 			// we set into @var result variable the first result cuz the response
-			// we use out this scope 
+			// we will use out this scope 
 			result = res[0];
 			suggestion.innerText = result.name;
 
@@ -90,10 +90,16 @@ function autocomplete(e) {
 }
 
 function runApp (cmd) {
-	exec(`${cmd}`, function (error, stdout, stderr) {
-		if (error) throw error;
-		console.log(stderr);
-	});
+	return new Promise(function (resolve, reject) {
+		exec(`${cmd}`, function (error, stdout, stderr) {
+			if (error) {
+				alert(error)
+				resolve(error); // Extrange? yeah, but i dont want to use try-catch
+			}
+			console.log(stderr);
+			resolve();
+		});
+	})
 }
 
 function execCmd(e) {
@@ -101,7 +107,7 @@ function execCmd(e) {
 
 	if (result && result.cmd) {
 
-		runApp(result.cmd)
+		runApp(result.cmd);
 
 	} else {
 
@@ -109,13 +115,11 @@ function execCmd(e) {
 			runApp(input.value.toLowerCase());
 	}
 
-	setTimeout( () => {
-		result = null;
-		input.value = '';
-		win.hide();
-		suggestion.style.display = 'none';
+	result = null;
+	input.value = '';
+	win.hide();
+	suggestion.style.display = 'none';
 
-	}, 50);
 
 }
 
