@@ -1,126 +1,118 @@
-const electron = require('electron').remote;
+const electron = require('electron').remote
 var { exec } = require('child_process')
-const fs = require('fs');
-const win = electron.getCurrentWindow();
+const win = electron.getCurrentWindow()
+const { myApps, installedApps } = require('../persistence/filesystem')
+const { runApp } = require('./runner')
+const { 
+	filterApps, 
+	isEmptyArray, 
+	toLowerCase,
+	listAppsMatched
+ } = require('./application')
 
-const myApps = JSON.parse(fs.readFileSync(`${__dirname}/db.json`, 'utf8'));
-var installedApps = fs.readdirSync('/usr/bin', 'utf8')
+let result
 
-var result;
-
-function filterApps(appList, app) {
-	if (appList.includes(app))
-		return appList;
+function toUpperCaseFirstLetter(string) {
+	if (string.length !== 1)
+		return string
+	return string.charAt(0).toUpperCase()
 }
 
-function isEmptyArray(param) {
-	// length > 0 means its not empty so its false
-	return param.length ? false : true;
+function showSuggestions(suggestion) {
+	suggestionElem.style.display = 'block'
+	suggestionElem.innerText = suggestion
+}
+
+function hideSuggestions() {
+	suggestionElem.style.display = 'none'
+	suggestionElem.innerText = ''
+}
+
+function findMatchedApp(apps, searching) {
+	let match = null
+	const posible = []
+
+	apps.filter(function (app) {
+		if (app == searching) {
+			match = app
+		} else {
+			posible.push(app);
+		}
+	})
+
+	return { match, posible }
 }
 
 function autocomplete(e) {
-	const typing = this.value.toLowerCase();
-	if (this.value.length == 1) {
-		input.value = this.value.charAt(0).toUpperCase();
-	}
+	const typing = toLowerCase(this.value);
+	this.value = toUpperCaseFirstLetter(this.value)
 
 	if (!isEmptyArray(this.value)) {
-		suggestion.style.display = 'block';
 
 		// look for searching app in custom DB, if not match with any register
 		// look for in installed app directory;
-
-		const res = myApps.filter(el => filterApps(el.keywords, typing));
-
+		result = {}
+		let res = myApps.filter(el => filterApps(el.keywords, typing));
+		
 		if (!isEmptyArray(res)) {
 
 			// we set into @var result variable the first result cuz the response
 			// we will use out this scope 
 			result = res[0];
-			suggestion.innerText = result.name;
-
-		} else {
-
-			const res = installedApps.filter(el => filterApps(el, typing));
-
-			if (!isEmptyArray(res)) {
-				var unique = {
-					match: null,
-					posible: []
-				};
-				res.filter(function (app) {
-					if (app == typing) {
-						unique.match = app
-					} else {
-						unique.posible.push(app);
-					}
-				})
-				/*
-				You could be wondering why u doing something stupid like store in an object
-				the real match and posible results, if u can directly handle response for 
-				render it on screen.
-				Well it is right but i want to show first the result real matched,
-				and directly i can not do this, cause the filter continue iterating for next
-				elements in array so finally if result real matched is not the last element,
-				what u think will happend?
-				*/
-				if (unique.match) {
-					suggestion.innerText = unique.match;
-				} else {
-					unique.posible.filter(function (app) {
-						// Remember to store in @var result for handle this result out this scope
-						// the last element wich is like the searching app
-						result = app;
-						suggestion.innerText = app;
-					})
-				}
-
-			} else {
-				result = null;
-				suggestion.innerText = '';
-				suggestion.style.display = 'none';
-			}
+			showSuggestions(result.name)
+			return 
 		}
-	} else {
-		result = undefined;
-		suggestion.innerText = '';
-		suggestion.style.display = 'none';
-	}
+		
+		res = installedApps.filter(el => filterApps(el, typing));
 
-}
-
-function runApp (cmd) {
-	return new Promise(function (resolve, reject) {
-		exec(`${cmd}`, function (error, stdout, stderr) {
-			if (error) {
-				alert(error)
-				resolve(error); // Extrange? yeah, but i dont want to use try-catch
+		if (!isEmptyArray(res)) {
+			const searching = findMatchedApp(res, typing)
+			if (searching.match) {
+				result.name = searching.match
+				showSuggestions(result.name)
+			} else {
+				searching.posible.filter(function (app) {
+					// Remember to store in @var result for handle this result out this scope
+					// the last element wich is like the searching app
+					result.name = app;
+					showSuggestions(result.name)
+				})
 			}
-			console.log(stderr);
-			resolve();
-		});
-	})
-}
+			return
+		}
 
-function execCmd(e) {
-	e.preventDefault();
-
-	if (result && result.cmd) {
-
-		runApp(result.cmd);
-
+		result = null;
+		hideSuggestions()
 	} else {
-
-		if (!isEmptyArray(input.value)) 
-			runApp(input.value.toLowerCase());
+		result = null;
+		hideSuggestions()
 	}
 
-	result = null;
-	input.value = '';
-	win.hide();
-	suggestion.style.display = 'none';
+}
 
+function resetWindowState() {
+	result = null
+	input.value = ''
+	win.hide()
+	suggestion.style.display = 'none'
+}
 
+function execCmd(command) {
+
+	if (result && result.cmd)
+		return runApp(result.cmd);
+
+	if (!isEmptyArray(command))
+		return runApp(command);
+
+}
+
+function handleSubmit(e) {
+	e.preventDefault()
+	const command = toLowerCase(input.value)
+
+	execCmd(command)
+	resetWindowState()
 }
 
 win.addListener('focus', () => {
@@ -135,7 +127,7 @@ document.addEventListener('keyup', (e) => {
 
 const form = document.getElementById('form');
 const input = document.getElementById('cmd');
-const suggestion = document.getElementById('suggestion');
+const suggestionElem = document.getElementById('suggestion');
 
 input.addEventListener('keyup', autocomplete, false);
-form.addEventListener('submit', execCmd, false);
+form.addEventListener('submit', handleSubmit, false);
