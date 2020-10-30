@@ -6,8 +6,7 @@ const { runApp } = require('./runner')
 const { 
 	filterApps, 
 	isEmptyArray, 
-	toLowerCase,
-	listAppsMatched
+	toLowerCase
  } = require('./application')
 
 let result
