@@ -13,6 +13,7 @@ const {
 
 let result
 
+
 function showSuggestions(suggestion) {
 	suggestionElem.style.display = 'block'
 	suggestionElem.innerText = suggestion
@@ -23,59 +24,59 @@ function hideSuggestions() {
 	suggestionElem.innerText = ''
 }
 
+function search(source, searching) {
+	const getAllCoincidenceApps = source.filter(el => {
+		return filterApps(el.keywords, searching)
+	})
+
+	return getAllCoincidenceApps
+}
+
+function handleSearching(source, searching) {
+	let searchResult = search(source, searching)
+
+	if (isEmptyArray(searchResult)) {
+		searchResult = search(installedApps, searching)
+	}
+
+	const appsFounds = findMatchedApp(searchResult)
+	if (appsFounds.match) {
+		return appsFounds.match
+	}
+	return appsFounds.posible[0]
+
+}
 
 function autocomplete(e) {
 	const typing = toLowerCase(this.value);
 	this.value = toUpperCaseFirstLetter(this.value)
 
-	if (!isEmptyArray(this.value)) {
-
-		// look for searching app in custom DB, if not match with any register
-		// look for in installed app directory;
-		result = {}
-		let res = myApps.filter(el => filterApps(el.keywords, typing));
-		
-		if (!isEmptyArray(res)) {
-
-			// we set into @var result variable the first result cuz the response
-			// we will use out this scope 
-			result = res[0];
-			showSuggestions(result.name)
-			return 
-		}
-		
-		res = installedApps.filter(el => filterApps(el, typing));
-
-		if (!isEmptyArray(res)) {
-			const searching = findMatchedApp(res, typing)
-			if (searching.match) {
-				result.name = searching.match
-				showSuggestions(result.name)
-			} else {
-				searching.posible.filter(function (app) {
-					// Remember to store in @var result for handle this result out this scope
-					// the last element wich is like the searching app
-					result.name = app;
-					showSuggestions(result.name)
-				})
-			}
-			return
-		}
-
-		result = null;
-		hideSuggestions()
-	} else {
-		result = null;
-		hideSuggestions()
+	if (isEmptyArray(typing)) {
+		resetState()
+		return
 	}
+
+	result = handleSearching(myApps, typing)
+
+	if (result) {
+		showSuggestions(result.name)
+		return
+	}
+	result = null;
+	hideSuggestions()
 
 }
 
-function resetWindowState() {
+function resetState() {
 	result = null
 	input.value = ''
+	hideSuggestions()
+}
+
+function resetWindowState() {
+	resetState()
 	win.hide()
-	suggestion.style.display = 'none'
+	hideSuggestions()
 }
 
 function execCmd(command) {
@@ -102,7 +103,7 @@ win.addListener('focus', () => {
 
 document.addEventListener('keyup', (e) => {
 	if (e.key == 'Escape') {
-		win.hide();
+		resetWindowState()
 	}
 })
 
