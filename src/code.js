@@ -37,15 +37,7 @@ function handleSearching(searching) {
 
 }
 
-function autocomplete(e) {
-	const typing = toLowerCase(this.value);
-	this.value = toUpperCaseFirstLetter(this.value)
-
-	if (isEmptyArray(typing)) {
-		resetState()
-		return
-	}
-
+function autocomplete(typing) {
 	result = handleSearching(typing)
 
 	if (result) {
@@ -53,7 +45,6 @@ function autocomplete(e) {
 		return
 	}
 	resetState()
-
 }
 
 function resetState() {
@@ -85,6 +76,18 @@ function handleSubmit(e) {
 	resetWindowState()
 }
 
+function handleInputSearch(e) {
+	const typing = toLowerCase(this.value);
+	this.value = toUpperCaseFirstLetter(this.value)
+
+	if (isEmptyArray(typing)) {
+		resetState()
+		return
+	}
+
+	autocomplete(typing)
+}
+
 win.addListener('focus', () => {
 	input.focus();
 })
@@ -99,5 +102,5 @@ const form = document.getElementById('form');
 const input = document.getElementById('cmd');
 const suggestionElem = document.getElementById('suggestion');
 
-input.addEventListener('keyup', autocomplete, false);
+input.addEventListener('keyup', handleInputSearch, false);
 form.addEventListener('submit', handleSubmit, false);
