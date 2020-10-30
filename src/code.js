@@ -19,8 +19,8 @@ function hideSuggestions() {
 	suggestionElem.innerText = ''
 }
 
-function handleSearching(source, searching) {
-	let searchResult = search(source, searching)
+function handleSearching(searching) {
+	let searchResult = search(myApps, searching)
 
 	if (isEmptyArray(searchResult)) {
 		searchResult = search(installedApps, searching)
@@ -46,7 +46,7 @@ function autocomplete(e) {
 		return
 	}
 
-	result = handleSearching(myApps, typing)
+	result = handleSearching(typing)
 
 	if (result) {
 		showSuggestions(result.name)
