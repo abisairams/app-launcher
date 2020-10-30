@@ -52,21 +52,19 @@ function autocomplete(e) {
 		showSuggestions(result.name)
 		return
 	}
-	result = null;
-	hideSuggestions()
+	resetState()
 
 }
 
 function resetState() {
 	result = null
-	input.value = ''
 	hideSuggestions()
 }
 
 function resetWindowState() {
 	resetState()
+	input.value = ''
 	win.hide()
-	hideSuggestions()
 }
 
 function execCmd(command) {
