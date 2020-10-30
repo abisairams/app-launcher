@@ -22,7 +22,7 @@ function findMatchedApp(apps, searching) {
 	const posible = []
 
 	apps.filter(function (app) {
-		if (app == searching) {
+		if (app.keywords == searching) {
 			match = app
 		} else {
 			posible.push(app);

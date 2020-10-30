@@ -51,12 +51,13 @@ function handleSearching(source, searching) {
 		searchResult = search(installedApps, searching)
 	}
 
-	const appsFounds = findMatchedApp(searchResult)
+	const appsFounds = findMatchedApp(searchResult, searching)
 	const orderedAppsFound = orderApps(appsFounds, searching)
 
 	if (appsFounds.match) {
 		return appsFounds.match
 	}
+
 	return appsFounds.posible[0]
 
 }
