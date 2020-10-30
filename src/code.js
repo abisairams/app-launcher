@@ -32,6 +32,18 @@ function search(source, searching) {
 	return getAllCoincidenceApps
 }
 
+function orderApps(apps, searching) {
+	const appsLocal = {...apps}
+
+	return appsLocal.posible.sort((a, b) => {
+		var compareA = toLowerCase(a.keywords).indexOf(searching)
+		var compareB = toLowerCase(b.keywords).indexOf(searching)
+
+		return compareA > compareB
+
+	})
+}
+
 function handleSearching(source, searching) {
 	let searchResult = search(source, searching)
 
@@ -40,6 +52,8 @@ function handleSearching(source, searching) {
 	}
 
 	const appsFounds = findMatchedApp(searchResult)
+	const orderedAppsFound = orderApps(appsFounds, searching)
+
 	if (appsFounds.match) {
 		return appsFounds.match
 	}
