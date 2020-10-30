@@ -3,13 +3,8 @@ var { exec } = require('child_process')
 const win = electron.getCurrentWindow()
 const { myApps, installedApps } = require('../persistence/filesystem')
 const { runApp } = require('./runner')
-const { 
-	filterApps, 
-	isEmptyArray, 
-	toLowerCase,
-	toUpperCaseFirstLetter,
-	findMatchedApp
- } = require('./application')
+const { filterApps, findMatchedApp, search, orderApps } = require('./search')
+const { isEmptyArray, toLowerCase, toUpperCaseFirstLetter } = require('./application')
 
 let result
 
@@ -22,26 +17,6 @@ function showSuggestions(suggestion) {
 function hideSuggestions() {
 	suggestionElem.style.display = 'none'
 	suggestionElem.innerText = ''
-}
-
-function search(source, searching) {
-	const getAllCoincidenceApps = source.filter(el => {
-		return filterApps(el.keywords, searching)
-	})
-
-	return getAllCoincidenceApps
-}
-
-function orderApps(apps, searching) {
-	const appsLocal = {...apps}
-
-	return appsLocal.posible.sort((a, b) => {
-		var compareA = toLowerCase(a.keywords).indexOf(searching)
-		var compareB = toLowerCase(b.keywords).indexOf(searching)
-
-		return compareA > compareB
-
-	})
 }
 
 function handleSearching(source, searching) {
