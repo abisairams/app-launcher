@@ -6,16 +6,12 @@ const { runApp } = require('./runner')
 const { 
 	filterApps, 
 	isEmptyArray, 
-	toLowerCase
+	toLowerCase,
+	toUpperCaseFirstLetter,
+	findMatchedApp
  } = require('./application')
 
 let result
-
-function toUpperCaseFirstLetter(string) {
-	if (string.length !== 1)
-		return string
-	return string.charAt(0).toUpperCase()
-}
 
 function showSuggestions(suggestion) {
 	suggestionElem.style.display = 'block'
@@ -27,20 +23,6 @@ function hideSuggestions() {
 	suggestionElem.innerText = ''
 }
 
-function findMatchedApp(apps, searching) {
-	let match = null
-	const posible = []
-
-	apps.filter(function (app) {
-		if (app == searching) {
-			match = app
-		} else {
-			posible.push(app);
-		}
-	})
-
-	return { match, posible }
-}
 
 function autocomplete(e) {
 	const typing = toLowerCase(this.value);
