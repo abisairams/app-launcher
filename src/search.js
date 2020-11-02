@@ -1,3 +1,4 @@
+const { toLowerCase } = require('./application')
 function filterApps(appList, app) {
 	if (appList.includes(app))
 		return appList;
@@ -18,7 +19,7 @@ function orderApps(apps, searching) {
 		var compareA = toLowerCase(a.keywords).indexOf(searching)
 		var compareB = toLowerCase(b.keywords).indexOf(searching)
 
-		return compareA > compareB
+		return compareA - compareB
 
 	})
 }
