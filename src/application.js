@@ -12,7 +12,8 @@ function toUpperCaseFirstLetter(string) {
 
 	const firstLetter = string.charAt(0).toUpperCase()
 	const remainingLetters = string.slice(1)
-	return firstLetter.concat(remainingLetters)}
+	return firstLetter.concat(remainingLetters)
+}
 
 exports.isEmptyArray = isEmptyArray
 exports.toLowerCase = toLowerCase
