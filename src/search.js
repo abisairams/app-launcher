@@ -1,7 +1,8 @@
 const { toLowerCase } = require('./application')
-function filterApps(appList, app) {
-	if (appList.includes(app))
-		return appList;
+
+function filterApps(source, searching) {
+	if (source.includes(searching))
+		return source;
 }
 
 function search(source, searching) {
@@ -12,31 +13,29 @@ function search(source, searching) {
 	return getAllCoincidenceApps
 }
 
-function orderApps(apps, searching) {
-	const appsLocal = {...apps}
-
-	return appsLocal.posible.sort((a, b) => {
-		var compareA = toLowerCase(a.keywords).indexOf(searching)
-		var compareB = toLowerCase(b.keywords).indexOf(searching)
-
-		return compareA - compareB
-
-	})
-}
-
 function findMatchedApp(apps, searching) {
 	let match = null
-	const posible = []
 
 	apps.filter(function (app) {
 		if (app.keywords == searching) {
-			match = app
-		} else {
-			posible.push(app)
+			return match = app
 		}
 	})
 
-	return { match, posible }
+	return match
+}
+
+function orderApps(apps, searching) {
+	const appsLocal = [...apps]
+
+	return appsLocal.sort((a, b) => {
+		var compareA = toLowerCase(a.keywords).indexOf(searching)
+		var compareB = toLowerCase(b.keywords).indexOf(searching)
+
+		if (compareA !== -1 && compareB !== -1) {
+			return compareA - compareB
+		}
+	})
 }
 
 module.exports = {

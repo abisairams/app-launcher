@@ -26,14 +26,12 @@ function handleSearching(searching) {
 		searchResult = search(installedApps, searching)
 	}
 
-	const appsFounds = findMatchedApp(searchResult, searching)
-	const orderedAppsFound = orderApps(appsFounds, searching)
+	const appFound = findMatchedApp(searchResult, searching)
 
-	if (appsFounds.match) {
-		return appsFounds.match
-	}
+	if (appFound) return appFound
 
-	return appsFounds.posible[0]
+	const orderedPosibleAppsFound = orderApps(searchResult, searching)
+	return orderedPosibleAppsFound[0]
 
 }
 
